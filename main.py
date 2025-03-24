@@ -10,9 +10,18 @@ from routes.products_crud import product_router
 from routes.cart_crud import cart_router
 from routes.orders_crud import order_router
 from routes.category_crud import category_router
+from starlette.responses import RedirectResponse
+
 
 # Initialize FastAPI app
-app = FastAPI(title="E-commerce API", description="FastAPI Backend for E-commerce Platform", version="1.0")
+app = FastAPI(
+    title="E-commerce API",
+    description="FastAPI Backend for E-commerce Platform",
+    version="1.0",
+    root_path="/",  # Explicitly set root path
+    redirect_slashes=False  # Disable automatic trailing slash redirects
+)
+
 
 # CORS Middleware Configuration
 ALLOWED_ORIGINS = [
@@ -29,8 +38,8 @@ app.add_middleware(
 
 # 🔹 Fix: Enforce HTTPS if request is incorrectly redirected
 @app.middleware("http")
-async def redirect_http_to_https(request: Request, call_next):
-    """Middleware to ensure HTTPS requests are handled correctly."""
+async def force_https_middleware(request: Request, call_next):
+    """Ensure all requests use HTTPS to avoid Mixed Content errors."""
     if request.headers.get("x-forwarded-proto") == "http":
         url = request.url.replace(scheme="https")
         return RedirectResponse(url=str(url))
