@@ -25,7 +25,7 @@ app.include_router(owner_auth_router, prefix="/owner-auth", tags=["Owner Authent
 app.include_router(product_router, prefix="/products", tags=["Product Management"])
 app.include_router(cart_router, prefix="/cart", tags=["Cart Management"])
 app.include_router(order_router, prefix="/orders", tags=["Orders"])
-app.include_router(category_router, prefix="/categories", tags=["Category Management"])
+app.include_router(category_router, prefix="/category", tags=["Category Management"])
 
 @app.get("/", tags=["Root"])
 def home():
