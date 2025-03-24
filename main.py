@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 import uvicorn
 import os
 
@@ -15,13 +14,11 @@ from routes.category_crud import category_router
 # Initialize FastAPI app
 app = FastAPI(title="E-commerce API", description="FastAPI Backend for E-commerce Platform", version="1.0")
 
-# Enforce HTTPS
-app.add_middleware(HTTPSRedirectMiddleware)
+#  REMOVE HTTPSRedirectMiddleware (since Hugging Face Spaces already enforces HTTPS)
 
-# CORS Middleware Configuration (Allow specific domains in production)
+# CORS Middleware Configuration (Allow only required domains)
 ALLOWED_ORIGINS = [
-    "https://e-commerce-owner-frontend.vercel.app",
-    "https://e-commerce-customer-frontend.vercel.app"
+    "https://e-commerce-owner-frontend.vercel.app",  # Your frontend domain
 ]
 
 app.add_middleware(
