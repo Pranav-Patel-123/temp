@@ -1,25 +1,35 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
+import uvicorn
+import os
+
+# Import Route Handlers
 from routes.customer_auth import customer_auth_router
 from routes.owner_auth import owner_auth_router
 from routes.products_crud import product_router
 from routes.cart_crud import cart_router
 from routes.orders_crud import order_router
 from routes.category_crud import category_router
-from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
-
 
 # Initialize FastAPI app
-app = FastAPI()
+app = FastAPI(title="E-commerce API", description="FastAPI Backend for E-commerce Platform", version="1.0")
+
+# Enforce HTTPS
 app.add_middleware(HTTPSRedirectMiddleware)
 
-# CORS Middleware Configuration
+# CORS Middleware Configuration (Allow specific domains in production)
+ALLOWED_ORIGINS = [
+    "https://e-commerce-owner-frontend.vercel.app",
+    "https://e-commerce-customer-frontend.vercel.app"
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change this to specific origins for security
+    allow_origins=ALLOWED_ORIGINS,  
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
 ) 
 
 # Register Routes
@@ -30,11 +40,13 @@ app.include_router(cart_router, prefix="/cart", tags=["Cart Management"])
 app.include_router(order_router, prefix="/orders", tags=["Orders"])
 app.include_router(category_router, prefix="/category", tags=["Category Management"])
 
+# Root Endpoint
 @app.get("/", tags=["Root"])
 def home():
-    return {"message": "Welcome to the E-commerce API"}
+    return {"message": "Welcome to the E-commerce API - Secure & Optimized"}
 
 # Run the app when executed directly
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=7860)
+    HOST = os.getenv("HOST", "0.0.0.0")
+    PORT = int(os.getenv("PORT", 7860))
+    uvicorn.run(app, host=HOST, port=PORT)
