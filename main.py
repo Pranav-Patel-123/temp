@@ -6,9 +6,12 @@ from routes.products_crud import product_router
 from routes.cart_crud import cart_router
 from routes.orders_crud import order_router
 from routes.category_crud import category_router
+from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
+
 
 # Initialize FastAPI app
 app = FastAPI()
+app.add_middleware(HTTPSRedirectMiddleware)
 
 # CORS Middleware Configuration
 app.add_middleware(
