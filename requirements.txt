@@ -5,3 +5,4 @@ motor
 python-dotenv
 cloudinary
 stripe
+python-multipart
