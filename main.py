@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import os
@@ -14,20 +14,27 @@ from routes.category_crud import category_router
 # Initialize FastAPI app
 app = FastAPI(title="E-commerce API", description="FastAPI Backend for E-commerce Platform", version="1.0")
 
-#  REMOVE HTTPSRedirectMiddleware (since Hugging Face Spaces already enforces HTTPS)
-
-# CORS Middleware Configuration (Allow only required domains)
+# CORS Middleware Configuration
 ALLOWED_ORIGINS = [
-    "https://e-commerce-owner-frontend.vercel.app",  # Your frontend domain
+    "https://e-commerce-owner-frontend.vercel.app",
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,  
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type"],
 ) 
+
+# 🔹 Fix: Enforce HTTPS if request is incorrectly redirected
+@app.middleware("http")
+async def redirect_http_to_https(request: Request, call_next):
+    """Middleware to ensure HTTPS requests are handled correctly."""
+    if request.headers.get("x-forwarded-proto") == "http":
+        url = request.url.replace(scheme="https")
+        return RedirectResponse(url=str(url))
+    return await call_next(request)
 
 # Register Routes
 app.include_router(customer_auth_router, prefix="/customer-auth", tags=["Customer Authentication"])
