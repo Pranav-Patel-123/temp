@@ -26,6 +26,7 @@ app = FastAPI(
 # CORS Middleware Configuration
 ALLOWED_ORIGINS = [
     "https://e-commerce-owner-frontend.vercel.app",
+    "https://e-commerce-customer-frontend.vercel.app"
 ]
 
 app.add_middleware(
