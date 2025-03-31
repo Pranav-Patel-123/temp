@@ -6,7 +6,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 load_dotenv()
 
 MONGO_URI = os.getenv("MONGO_URI")
-DB_NAME = "ph"  # Explicitly set the database name
+DB_NAME = "temp"  # Explicitly set the database name
 
 if not MONGO_URI:
     raise ValueError("MONGO_URI is not set in .env file")
